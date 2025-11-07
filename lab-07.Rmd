@@ -1,6 +1,6 @@
 ---
 title: "Lab 07 - Modelling course evaluations"
-author: "INSERT NAME HERE"
+author: "Kirin Bhatnagar"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -16,6 +16,7 @@ library(tidymodels)
 
 ```{r read-data}
 evals<-read.csv("data/evals.csv", row.names=1)
+view(evals)
 ```
 
 
@@ -24,7 +25,8 @@ evals<-read.csv("data/evals.csv", row.names=1)
 1.  Visualize the distribution of `score` in the dataframe `evals`.
 
 ```{r viz-score}
-# add code here
+evals %>%
+  ggplot(aes(x = score)) + geom_histogram(bins = 20)
 ```
 
 *Add your other details and narratives here.*
@@ -32,7 +34,16 @@ evals<-read.csv("data/evals.csv", row.names=1)
 2.  Visualize and describe the relationship between `score` and `bty_avg` using `geom_point()` to represent the data. 
 
 ```{r scatterplot}
-# add code here
+evals %>%
+  ggplot(mapping = aes(
+    x = score, 
+    y = bty_avg)) + 
+  geom_point() +
+  labs(
+    title = "Relationship between score and bty_avg",
+    x = "Score",
+    y = "Bty_avg"
+  )
 ```
 
 *Add your narrative and other details here.*
@@ -45,12 +56,12 @@ evals<-read.csv("data/evals.csv", row.names=1)
 # remove eval = FALSE from the code chunk options after filling in the blanks
 score_bty_fit <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(___ ~ ___, data = ___)
+  fit(bty_avg ~ score, data = evals)
 ```
 
 ```{r tidy-score_bty_fit, eval = FALSE}
 # remove eval = FALSE from the code chunk options after filling in the blanks
-tidy(___)
+tidy(score_bty_fit)
 ```
 
 *Add your linear model here. Don't worry too much about notation, you can use things like score-hat.*
@@ -59,6 +70,7 @@ tidy(___)
 
 ```{r viz-score_bty_fit,eval=FALSE}
 # add your plot here. Hint, you can add the regression line using geom_smooth()
+ggplot(data = evals, aes(x = score, y = bty_avg)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + labs(title = "Relationship between score and bty_avg", x = "Score", y = "Bty_avg")
 ```
 
 3. Interpret the slope of the linear model in context of the data.
@@ -73,7 +85,7 @@ tidy(___)
 
 ```{r R2, eval = FALSE}
 # remove eval = FALSE from the code chunk options after filling in the blanks
-glance(___)$___
+glance(score_bty_fit)$r.squared
 ```
 
 *Add your interpretation here*
